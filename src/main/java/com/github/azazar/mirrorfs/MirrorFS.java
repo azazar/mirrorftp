@@ -59,9 +59,9 @@ public class MirrorFS {
 
         fsf.setFileSystem(new MirrorFileSystemFactory(user, storages.toArray(File[]::new)));
         
-        fsf.createServer().start();
-
         // TODO : configure TLS (see https://mina.apache.org/ftpserver-project/embedding_ftpserver.html for details)
+
+        fsf.createServer().start();
     }
 
 }
