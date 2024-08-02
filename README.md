@@ -84,4 +84,4 @@ The project includes VSCode launch configurations and tasks for easy development
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](https://www.gnu.org/licenses/gpl-3.0.html) file for details.
+MirrorFTP is open-source software licensed under the GNU General Public License v3.0 (GPLv3). This license grants you the freedom to use, modify, and distribute the software, provided that any derivative works are also distributed under the same license terms. For the full license text and details on your rights and obligations, please visit the [GNU GPLv3 website](https://www.gnu.org/licenses/gpl-3.0.html).
