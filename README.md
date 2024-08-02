@@ -13,15 +13,19 @@ MirrorFTP is a simple FTP server that serves file replicas from the local filesy
 
 MirrorFTP uses a unique approach to serve files from multiple storage locations:
 
-1. **Multiple Storage Locations**: The server accepts two or more storage locations as command-line arguments. These locations are treated as mirrors of each other.
+1. **Multiple Storage Locations**: The server accepts two or more storage locations as command-line arguments. These locations represent different physical storage devices or paths.
 
-2. **Unified View**: MirrorFTP presents a unified view of the files across all storage locations. If a file exists in any of the storage locations, it will appear in the FTP server's file listing.
+2. **Buckets**: Within each storage location, MirrorFTP manages "buckets". A bucket is a top-level directory that contains mirrored content. Buckets with the same name across different storage locations are treated as mirrors of each other.
 
-3. **Read Operations**: When a client requests to read a file, MirrorFTP randomly selects one of the storage locations that contains the file and serves it from there.
+3. **Unified View**: MirrorFTP presents a unified view of the buckets and their contents across all storage locations. If a file exists in a bucket on any of the storage locations, it will appear in the FTP server's file listing for that bucket.
 
-4. **Write Operations**: When a client uploads or modifies a file, MirrorFTP writes the changes to all storage locations simultaneously, ensuring data consistency across all mirrors.
+4. **Read Operations**: When a client requests to read a file from a bucket, MirrorFTP randomly selects one of the storage locations that contains the file in that bucket and serves it from there.
 
-5. **Directory Operations**: Creating or deleting directories affects all storage locations to maintain consistency.
+5. **Write Operations**: When a client uploads or modifies a file in a bucket, MirrorFTP writes the changes to all storage locations that contain that bucket simultaneously, ensuring data consistency across all mirrors.
+
+6. **Directory Operations**: Creating or deleting directories within a bucket affects all storage locations that contain that bucket, maintaining consistency across mirrors.
+
+7. **Bucket-Level Mirroring**: Mirroring is done at the bucket level, not the entire storage level. This allows for flexible data distribution and partial mirroring across storage locations.
 
 ## Key Concepts
 
