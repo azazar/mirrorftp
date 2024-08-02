@@ -54,7 +54,7 @@ class MirrorFTPTest {
         Files.createFile(file2);
 
         // Start the FTP server
-        String[] args = {"-p" + PASSWORD, TEMP_DIR_1.toString(), TEMP_DIR_2.toString()};
+        String[] args = {"--password=" + PASSWORD, "--port=" + PORT, TEMP_DIR_1.toString(), TEMP_DIR_2.toString()};
         ServerConfig config = MirrorFTP.parseArguments(args);
         SERVER = MirrorFTP.createServer(config);
         SERVER.start();

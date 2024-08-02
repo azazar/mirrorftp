@@ -35,11 +35,11 @@ public class MirrorFTP {
 
         for (String arg : args) {
             if (arg.startsWith("-")) {
-                if (arg.startsWith("-p")) {
-                    user.setPassword(arg.substring(2));
+                if (arg.startsWith("--password=")) {
+                    user.setPassword(arg.substring("--password=".length()));
                 }
-                else if (arg.startsWith("-port=")) {
-                    port = Integer.parseInt(arg.substring(6));
+                else if (arg.startsWith("--port=")) {
+                    port = Integer.parseInt(arg.substring("--port=".length()));
                 }
                 else {
                     throw new IllegalArgumentException("Unknown option: " + arg);
