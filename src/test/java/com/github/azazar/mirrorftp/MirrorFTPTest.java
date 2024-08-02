@@ -34,7 +34,7 @@ class MirrorFTPTest {
     private static final String PASSWORD = "testpassword";
 
     @BeforeAll
-    static void setUp() throws Exception {
+    public static void setUp() throws Exception {
         // Create temporary directories
         TEMP_DIR_1 = Files.createTempDirectory("mirrorftptest1");
         TEMP_DIR_2 = Files.createTempDirectory("mirrorftptest2");
@@ -69,7 +69,7 @@ class MirrorFTPTest {
     }
 
     @AfterAll
-    static void tearDown() throws Exception {
+    public static void tearDown() throws Exception {
         if (FTP_CLIENT.isConnected()) {
             FTP_CLIENT.disconnect();
         }
@@ -102,9 +102,11 @@ class MirrorFTPTest {
     @Test
     void testUploadFile() throws IOException {
         String content = "Hello, World!";
-        InputStream inputStream = new ByteArrayInputStream(content.getBytes());
-        boolean result = FTP_CLIENT.storeFile("uploadtest.txt", inputStream);
-        inputStream.close();
+        boolean result;
+        
+        try (InputStream inputStream = new ByteArrayInputStream(content.getBytes())) {
+            result = FTP_CLIENT.storeFile("uploadtest.txt", inputStream);
+        }
 
         assertTrue(result);
         assertTrue(Files.exists(BUCKET_DIR_1.resolve("uploadtest.txt")));
