@@ -31,12 +31,15 @@ public class MirrorFTP {
         int port = 2121; // Default port
 
         user.setAuthorities(List.of(new SimpleAuthority()));
-        user.setName("user");
+        user.setName("user"); // Default username
         user.setPassword("changeme");
 
         for (String arg : args) {
             if (arg.startsWith("-")) {
-                if (arg.startsWith("--password=")) {
+                if (arg.startsWith("--user=")) {
+                    user.setName(arg.substring("--user=".length()));
+                }
+                else if (arg.startsWith("--password=")) {
                     user.setPassword(arg.substring("--password=".length()));
                 }
                 else if (arg.startsWith("--port=")) {
