@@ -29,17 +29,19 @@ MirrorFTP uses a unique approach to serve files from multiple storage locations:
 
 ## Key Concepts
 
-1. **MirrorFSRoot**: Represents the root of the file system and manages the list of storage locations.
+1. **Multiple Storage Locations**: The system manages multiple physical storage locations, allowing for data redundancy and distribution.
 
-2. **MirrorFSFile**: Represents a file or directory in the mirrored file system. It keeps track of the file's presence across different storage locations.
+2. **Unified File System View**: Despite having multiple storage locations, the system presents a single, unified view of the file system to FTP clients.
 
-3. **MirrorFileOutputStream**: A custom OutputStream that writes data to all storage locations simultaneously when a file is being uploaded or modified.
+3. **Bucket-Level Mirroring**: Files are mirrored at the bucket (top-level directory) level, allowing for flexible data distribution across storage locations.
 
-4. **MirrorFileSystemView**: Provides a unified view of the file system to the FTP server, hiding the complexity of multiple storage locations.
+4. **Distributed Read Operations**: Read requests are distributed across available storage locations, potentially improving read performance.
 
-5. **SingleUserManager**: Manages authentication for a single user, as the server is designed for single-user access.
+5. **Synchronized Write Operations**: Write operations are performed simultaneously across all relevant storage locations, ensuring data consistency.
 
-6. **SimpleAuthority**: Provides a simple implementation of FTP server authorities, granting all permissions to the authenticated user.
+6. **Single-User Authentication**: The system is designed for single-user access, simplifying authentication and authorization.
+
+7. **Custom File System Implementation**: The system implements a custom file system that integrates with Apache FtpServer, allowing for the unique mirroring and distribution features.
 
 ## Requirements
 
