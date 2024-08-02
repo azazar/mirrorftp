@@ -8,21 +8,27 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.impl.BaseUser;
 
 /**
- *     MirrorFTP is a simple FTP server that serves files replicas from the local filesystems of other machines.
+ * MirrorFTP is a simple FTP server that serves files replicas from the local filesystems of other machines.
  *
  * @author Mikhail Yevchenko <spam@uo1.net>
  */
 public class MirrorFTP {
 
     public static void main(String[] args) throws FtpException {
+        ServerConfig config = parseArguments(args);
+        FtpServer server = createServer(config);
+        server.start();
+    }
+
+    public static ServerConfig parseArguments(String[] args) {
         List<File> storages = new ArrayList<>();
-        
         BaseUser user = new BaseUser();
         int port = 2121; // Default port
 
@@ -48,24 +54,25 @@ public class MirrorFTP {
         }
         
         if (storages.size() < 2) {
-            throw new IllegalArgumentException("Not enough replicas specified to start     MirrorFTP FTP server");
+            throw new IllegalArgumentException("Not enough replicas specified to start MirrorFTP FTP server");
         }
 
+        return new ServerConfig(user, port, storages);
+    }
+
+    public static FtpServer createServer(ServerConfig config) throws FtpException {
         FtpServerFactory fsf = new FtpServerFactory();
         
         ListenerFactory lf = new ListenerFactory();
-
-        lf.setPort(port);
-        
+        lf.setPort(config.getPort());
         fsf.addListener("default", lf.createListener());
 
-        fsf.setUserManager(new SingleUserManager(user));
-
-        fsf.setFileSystem(new MirrorFileSystemFactory(user, storages.toArray(File[]::new)));
+        fsf.setUserManager(new SingleUserManager(config.getUser()));
+        fsf.setFileSystem(new MirrorFileSystemFactory(config.getUser(), config.getStorages().toArray(File[]::new)));
         
         // TODO : configure TLS (see https://mina.apache.org/ftpserver-project/embedding_ftpserver.html for details)
 
-        fsf.createServer().start();
+        return fsf.createServer();
     }
 
 }
