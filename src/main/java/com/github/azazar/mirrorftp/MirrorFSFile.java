@@ -231,7 +231,7 @@ public class MirrorFSFile implements FtpFile {
         if (parent instanceof MirrorFSRoot)
             throw new IOException("Can't create output stream for root directory");
 
-        return new MirrorFileOutputStream(getStorageFiles());
+        return new MirrorFileOutputStream(getStorageFiles(), offset);
     }
 
     @Override
