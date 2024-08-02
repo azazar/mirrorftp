@@ -4,12 +4,14 @@
 package com.github.azazar.mirrorfs;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.ftpserver.ftplet.FtpFile;
 
@@ -19,9 +21,12 @@ import org.apache.ftpserver.ftplet.FtpFile;
  */
 public class MirrorFSFile implements FtpFile {
 
+	private static final Random RNG = new Random();
+
     String name;
     FtpFile parent;
     File[] storages;
+	private File[] storageFiles = null;
 
 	MirrorFSFile(String name, MirrorFSRoot root) {
 		this.name = name;
@@ -58,17 +63,41 @@ public class MirrorFSFile implements FtpFile {
 
 	@Override
 	public boolean isDirectory() {
-        return true;
+		if (parent instanceof MirrorFSRoot)
+			return true;
+		
+		for (File path : getStorageFiles()) {
+			if (!path.isDirectory()) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 	@Override
 	public boolean isFile() {
-        return false;
+		if (parent instanceof MirrorFSRoot)
+	        return false;
+
+		for (File path : getStorageFiles()) {
+			if (!path.isFile()) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 	@Override
 	public boolean doesExist() {
-        return true;
+		for (File path : getStorageFiles()) {
+			if (path.exists()) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	@Override
@@ -83,7 +112,10 @@ public class MirrorFSFile implements FtpFile {
 
 	@Override
 	public boolean isRemovable() {
-        return false;
+		if (parent instanceof MirrorFSRoot)
+	        return false;
+
+		return isWritable();
 	}
 
 	@Override
@@ -114,7 +146,12 @@ public class MirrorFSFile implements FtpFile {
 
 	@Override
 	public boolean setLastModified(long time) {
-        return false;
+		for (File path : getStorageFiles()) {
+			if (!path.setLastModified(time)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -125,7 +162,7 @@ public class MirrorFSFile implements FtpFile {
 
         long size = 0;
 
-		for (File file : storages) {
+		for (File file : getStorageFiles()) {
             size = Math.max(size, file.length());
         }
 
@@ -137,14 +174,38 @@ public class MirrorFSFile implements FtpFile {
         return getAbsolutePath();
 	}
 
+	public File[] getStorageFiles() {
+		if (storageFiles == null) {
+			storageFiles = new File[storages.length];
+
+			for (int i = 0; i < storages.length; i++) {
+				storageFiles[i] = new File(storages[i], getAbsolutePath().substring(1));
+			}
+		}
+
+		return storageFiles;
+	}
+
 	@Override
 	public boolean mkdir() {
-		throw new UnsupportedOperationException("Unimplemented method 'mkdir'");
+		boolean result = true;
+
+		for (File f : getStorageFiles()) {
+			result = result && f.mkdir();
+		}
+
+		return result;
 	}
 
 	@Override
 	public boolean delete() {
-		throw new UnsupportedOperationException("Unimplemented method 'delete'");
+		boolean result = true;
+
+		for (File f : getStorageFiles()) {
+			result = result && f.delete();
+		}
+
+		return result;
 	}
 
 	@Override
@@ -167,12 +228,18 @@ public class MirrorFSFile implements FtpFile {
 
 	@Override
 	public OutputStream createOutputStream(long offset) throws IOException {
-		throw new UnsupportedOperationException("Unimplemented method 'createOutputStream'");
+		if (parent instanceof MirrorFSRoot)
+			throw new IOException("Can't create output stream for root directory");
+
+		return new MirrorFileOutputStream(getStorageFiles());
 	}
 
 	@Override
 	public InputStream createInputStream(long offset) throws IOException {
-		throw new UnsupportedOperationException("Unimplemented method 'createInputStream'");
+		if (parent instanceof MirrorFSRoot)
+			throw new IOException("Can't create input stream for root directory");
+
+		return new FileInputStream(getStorageFiles()[RNG.nextInt(storages.length)]);
 	}
 
 	public void addStorage(File storage) {
