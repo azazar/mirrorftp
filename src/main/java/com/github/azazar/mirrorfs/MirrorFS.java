@@ -24,6 +24,7 @@ public class MirrorFS {
         List<File> storages = new ArrayList<>();
         
         BaseUser user = new BaseUser();
+        int port = 2121; // Default port
 
         user.setAuthorities(List.of(new SimpleAuthority()));
         user.setName("user");
@@ -33,6 +34,9 @@ public class MirrorFS {
             if (arg.startsWith("-")) {
                 if (arg.startsWith("-p")) {
                     user.setPassword(arg.substring(2));
+                }
+                else if (arg.startsWith("-port=")) {
+                    port = Integer.parseInt(arg.substring(6));
                 }
                 else {
                     throw new IllegalArgumentException("Unknown option: " + arg);
@@ -51,7 +55,7 @@ public class MirrorFS {
         
         ListenerFactory lf = new ListenerFactory();
 
-        lf.setPort(2121);
+        lf.setPort(port);
         
         fsf.addListener("default", lf.createListener());
 

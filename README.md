@@ -32,15 +32,16 @@ java -jar target/mirrorfs-1.0-SNAPSHOT.jar [options] <storage1> <storage2> [<sto
 
 Options:
 - `-p<password>`: Set the user password (default: changeme)
+- `-port=<port>`: Set the listening port (default: 2121)
 
 Example:
 ```
-java -jar target/mirrorfs-1.0-SNAPSHOT.jar -pMySecurePassword /path/to/storage1 /path/to/storage2
+java -jar target/mirrorfs-1.0-SNAPSHOT.jar -pMySecurePassword -port=2222 /path/to/storage1 /path/to/storage2
 ```
 
 ## Connecting to MirrorFS
 
-- FTP server runs on port 2121 by default
+- FTP server runs on port 2121 by default (can be changed using the `-port` option)
 - Use the username "user" and the configured password to connect
 
 ## Development
