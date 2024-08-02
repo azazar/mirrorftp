@@ -30,7 +30,7 @@ class MirrorFTPTest {
     private static Path BUCKET_DIR_1;
     private static Path BUCKET_DIR_2;
     private static final int PORT = 2121;
-    private static final String USERNAME = "user";
+    private static final String USERNAME = "testuser";
     private static final String PASSWORD = "testpassword";
 
     @BeforeAll
@@ -59,7 +59,7 @@ class MirrorFTPTest {
         Files.createFile(file2);
 
         // Start the FTP server
-        String[] args = {"--password=" + PASSWORD, "--port=" + PORT, TEMP_DIR_1.toString(), TEMP_DIR_2.toString()};
+        String[] args = {"--user=" + USERNAME, "--password=" + PASSWORD, "--port=" + PORT, TEMP_DIR_1.toString(), TEMP_DIR_2.toString()};
         ServerConfig config = MirrorFTP.parseArguments(args);
         SERVER = MirrorFTP.createServer(config);
         SERVER.start();
