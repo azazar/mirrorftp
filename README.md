@@ -70,7 +70,7 @@ Options:
 
 Example:
 ```
-java -jar target/mirrorftp-1.0-SNAPSHOT.jar --password=MySecurePassword --port=2222 /path/to/storage1 /path/to/storage2
+java -jar target/mirrorftp-1.0-SNAPSHOT.jar --password=MyPassword --port=2222 /path/to/storage1 /path/to/storage2
 ```
 
 ## Connecting to MirrorFTP
