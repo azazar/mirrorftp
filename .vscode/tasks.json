@@ -6,7 +6,7 @@
         {
             "label": "Create test run directories",
             "type": "shell",
-            "command": "bash -c 'for replica_root in /tmp/mirrorfs-test/{1,2}/bucket; do mkdir -p $replica_root; echo OK > $replica_root/bucket/ok; done; echo Not OK > /tmp/mirrorfs-test/1/not_ok; echo Not OK > /tmp/mirrorfs-test/1/bucket/not_ok'"
+            "command": "bash -c 'for replica_root in /tmp/mirrorfs-test/{1,2}/bucket; do mkdir -p $replica_root; echo OK > $replica_root/ok; done; for path in /tmp/mirrorfs-test/{not_ok,1/bucket/not_ok}; do echo Not OK > $path; echo Not OK > /tmp/mirrorfs-test/1/bucket/not_ok; done'"
         }
     ]
 }
