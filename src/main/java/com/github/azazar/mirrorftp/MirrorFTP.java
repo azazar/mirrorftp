@@ -3,6 +3,7 @@ package com.github.azazar.mirrorftp;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.ftpserver.FtpServer;
@@ -40,6 +41,11 @@ public class MirrorFTP {
                 }
                 else if (arg.startsWith("--port=")) {
                     port = Integer.parseInt(arg.substring("--port=".length()));
+                }
+                else if (arg.startsWith("--add-storage-nodes=")) {
+                    File dir = new File(arg.substring("--add-storage-nodes=".length()));
+
+                    storages.addAll(Arrays.asList(dir.listFiles(ff -> ff.isDirectory())));
                 }
                 else {
                     throw new IllegalArgumentException("Unknown option: " + arg);

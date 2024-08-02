@@ -67,11 +67,18 @@ java -jar target/mirrorftp-1.0-SNAPSHOT.jar [options] <storage1> <storage2> [<st
 Options:
 - `--password=<password>`: Set the user password (default: changeme)
 - `--port=<port>`: Set the listening port (default: 2121)
+- `--add-storage-nodes=<directory>`: Add all subdirectories of the specified directory as storage locations
 
-Example:
+Examples:
 ```
+# Basic usage with two storage locations
 java -jar target/mirrorftp-1.0-SNAPSHOT-jar-with-dependencies.jar --password=MyPassword --port=2222 /path/to/storage1 /path/to/storage2
+
+# Using --add-storage-nodes to add multiple storage locations
+java -jar target/mirrorftp-1.0-SNAPSHOT-jar-with-dependencies.jar --password=MyPassword --port=2222 --add-storage-nodes=/path/to/storage/nodes
 ```
+
+The `--add-storage-nodes` option is useful when you have multiple storage locations in a single parent directory. It automatically adds all subdirectories of the specified directory as storage locations, saving you from having to list them individually.
 
 ## Connecting to MirrorFTP
 

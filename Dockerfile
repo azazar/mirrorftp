@@ -11,4 +11,4 @@ COPY --from=build /app/target/mirrorftp-1.0-SNAPSHOT-jar-with-dependencies.jar .
 
 ENTRYPOINT ["java", "-jar", "mirrorftp.jar"]
 
-CMD ["/storage/1", "/storage/2"]
+CMD ["--add-storage-nodes=/storage"]

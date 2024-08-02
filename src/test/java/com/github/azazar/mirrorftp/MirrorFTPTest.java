@@ -35,9 +35,14 @@ class MirrorFTPTest {
 
     @BeforeAll
     public static void setUp() throws Exception {
+        Path testTempDir = Files.createTempDirectory("mirrorftptest");
+
         // Create temporary directories
-        TEMP_DIR_1 = Files.createTempDirectory("mirrorftptest1");
-        TEMP_DIR_2 = Files.createTempDirectory("mirrorftptest2");
+        TEMP_DIR_1 = testTempDir.resolve("mirrorftptest1");
+        TEMP_DIR_2 = testTempDir.resolve("mirrorftptest2");
+
+        Files.createDirectory(TEMP_DIR_1);
+        Files.createDirectory(TEMP_DIR_2);
 
         TEST_BUCKET = "testbucket";
 
