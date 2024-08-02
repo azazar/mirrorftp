@@ -51,7 +51,7 @@ public class MirrorFileSystemView implements FileSystemView {
 
     @Override
     public FtpFile getFile(String file) throws FtpException {
-        while (file.endsWith("/")) {
+        while (file.length() > 1 && file.endsWith("/")) {
             file = file.substring(0, file.length() - 1);
         }
 

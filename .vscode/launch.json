@@ -5,14 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "java",
+            "type": "jdk",
             "name": "Launch Java Program",
             "request": "launch",
             "mainClass": "com.github.azazar.mirrorftp.MirrorFTP",
-            "args": [
-                "/tmp/mirrorfs-test/1",
-                "/tmp/mirrorfs-test/2",
-            ],
+            "args": "/tmp/mirrorfs-test/1 /tmp/mirrorfs-test/2",
             "preLaunchTask": "Create test run directories",
         },
     ]
