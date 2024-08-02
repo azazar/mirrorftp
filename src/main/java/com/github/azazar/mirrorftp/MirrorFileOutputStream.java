@@ -19,7 +19,7 @@ public class MirrorFileOutputStream extends OutputStream {
 
     public MirrorFileOutputStream(File[] files, long offset) throws FileNotFoundException {
         if (offset > 0) {
-            throw new UnsupportedOperationException("Offset is not supported");
+            throw new UnsupportedOperationException("Offset is not supported"); // TODO : implement offset support
         }
 
         this.streams = new OutputStream[files.length];
