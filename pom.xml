@@ -64,9 +64,11 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <manifest>
-                        <mainClass>com.github.azazar.mirrorftp.MirrorFTP</mainClass>
-                    </manifest>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.github.azazar.mirrorftp.MirrorFTP</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>
