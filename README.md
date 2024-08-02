@@ -61,7 +61,7 @@ mvn clean package
 To run MirrorFTP, use the following command:
 
 ```
-java -jar target/mirrorfs-1.0-SNAPSHOT.jar [options] <storage1> <storage2> [<storage3> ...]
+java -jar target/mirrorftp-1.0-SNAPSHOT.jar [options] <storage1> <storage2> [<storage3> ...]
 ```
 
 Options:
@@ -70,7 +70,7 @@ Options:
 
 Example:
 ```
-java -jar target/mirrorfs-1.0-SNAPSHOT.jar -pMySecurePassword -port=2222 /path/to/storage1 /path/to/storage2
+java -jar target/mirrorftp-1.0-SNAPSHOT.jar -pMySecurePassword -port=2222 /path/to/storage1 /path/to/storage2
 ```
 
 ## Connecting to MirrorFTP
