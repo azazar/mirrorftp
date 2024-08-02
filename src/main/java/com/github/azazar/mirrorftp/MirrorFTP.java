@@ -2,7 +2,7 @@
  * PROPRIETARY/CONFIDENTIAL
  */
 
-package com.github.azazar.mirrorfs;
+package com.github.azazar.mirrorftp;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,11 +14,11 @@ import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.impl.BaseUser;
 
 /**
- * MirrorFS is a simple FTP server that serves files replicas from the local filesystems of other machines.
+ *     MirrorFTP is a simple FTP server that serves files replicas from the local filesystems of other machines.
  *
  * @author Mikhail Yevchenko <spam@uo1.net>
  */
-public class MirrorFS {
+public class MirrorFTP {
 
     public static void main(String[] args) throws FtpException {
         List<File> storages = new ArrayList<>();
@@ -48,7 +48,7 @@ public class MirrorFS {
         }
         
         if (storages.size() < 2) {
-            throw new IllegalArgumentException("Not enough replicas specified to start MirrorFS FTP server");
+            throw new IllegalArgumentException("Not enough replicas specified to start     MirrorFTP FTP server");
         }
 
         FtpServerFactory fsf = new FtpServerFactory();

@@ -1,6 +1,6 @@
-# MirrorFS
+# MirrorFTP
 
-MirrorFS is a simple FTP server that serves file replicas from the local filesystems of multiple machines. It provides a unified view of files stored across multiple storage locations, ensuring data redundancy and availability.
+MirrorFTP is a simple FTP server that serves file replicas from the local filesystems of multiple machines. It provides a unified view of files stored across multiple storage locations, ensuring data redundancy and availability.
 
 ## Features
 
@@ -22,9 +22,9 @@ To build the project, run the following command in the project root directory:
 mvn clean package
 ```
 
-## Running MirrorFS
+## Running MirrorFTP
 
-To run MirrorFS, use the following command:
+To run MirrorFTP, use the following command:
 
 ```
 java -jar target/mirrorfs-1.0-SNAPSHOT.jar [options] <storage1> <storage2> [<storage3> ...]
@@ -39,7 +39,7 @@ Example:
 java -jar target/mirrorfs-1.0-SNAPSHOT.jar -pMySecurePassword -port=2222 /path/to/storage1 /path/to/storage2
 ```
 
-## Connecting to MirrorFS
+## Connecting to     MirrorFTP
 
 - FTP server runs on port 2121 by default (can be changed using the `-port` option)
 - Use the username "user" and the configured password to connect

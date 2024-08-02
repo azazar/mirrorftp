@@ -1,7 +1,7 @@
 /*
  * PROPRIETARY/CONFIDENTIAL
  */
-package com.github.azazar.mirrorfs;
+package com.github.azazar.mirrorftp;
 
 import org.apache.ftpserver.ftplet.Authentication;
 import org.apache.ftpserver.ftplet.AuthenticationFailedException;

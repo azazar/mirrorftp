@@ -1,7 +1,7 @@
 /*
  * PROPRIETARY/CONFIDENTIAL
  */
-package com.github.azazar.mirrorfs;
+package com.github.azazar.mirrorftp;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ftpserver.ftplet.FileSystemView;
