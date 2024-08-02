@@ -1,6 +1,3 @@
-/*
- * PROPRIETARY/CONFIDENTIAL
- */
 package com.github.azazar.mirrorftp;
 
 import java.io.File;
@@ -10,10 +7,6 @@ import org.apache.ftpserver.ftplet.FileSystemView;
 import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.ftplet.User;
 
-/**
- *
- * @author Mikhail Yevchenko <m.ṥῥẚɱ.ѓѐḿởύḙ@uo1.net>
- */
 public class MirrorFileSystemFactory implements FileSystemFactory {
 
     final User fsUser;

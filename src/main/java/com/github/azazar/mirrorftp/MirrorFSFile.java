@@ -1,6 +1,3 @@
-/*
- * PROPRIETARY/CONFIDENTIAL
- */
 package com.github.azazar.mirrorftp;
 
 import java.io.File;
@@ -15,10 +12,6 @@ import java.util.Random;
 
 import org.apache.ftpserver.ftplet.FtpFile;
 
-/**
- *
- * @author Mikhail Yevchenko <m.ṥῥẚɱ.ѓѐḿởύḙ@uo1.net>
- */
 public class MirrorFSFile implements FtpFile {
 
     private static final Random RNG = new Random();

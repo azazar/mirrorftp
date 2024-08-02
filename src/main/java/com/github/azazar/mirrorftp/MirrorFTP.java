@@ -1,6 +1,3 @@
-/*
- * PROPRIETARY/CONFIDENTIAL
- */
 
 package com.github.azazar.mirrorftp;
 

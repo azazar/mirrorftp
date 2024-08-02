@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.ftpserver.usermanager.impl.BaseUser;
-
 public class ServerConfig {
     private final BaseUser user;
     private final int port;

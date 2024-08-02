@@ -1,6 +1,3 @@
-/*
- * PROPRIETARY/CONFIDENTIAL
- */
 package com.github.azazar.mirrorftp;
 
 import org.apache.ftpserver.ftplet.Authentication;
@@ -10,10 +7,6 @@ import org.apache.ftpserver.ftplet.User;
 import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.usermanager.UsernamePasswordAuthentication;
 
-/**
- *
- * @author Mikhail Yevchenko <m.ṥῥẚɱ.ѓѐḿởύḙ@uo1.net>
- */
 public class SingleUserManager implements UserManager {
 
     private final User user;

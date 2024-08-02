@@ -1,14 +1,8 @@
-/*
- * PROPRIETARY/CONFIDENTIAL
- */
 package com.github.azazar.mirrorftp;
 
 import java.io.File;
 
-/**
- *
- * @author Mikhail Yevchenko <m.ṥῥẚɱ.ѓѐḿởύḙ@uo1.net>
- */
+
 class Util {
 
     static File[] arrayAdd(File[] array, File element) {

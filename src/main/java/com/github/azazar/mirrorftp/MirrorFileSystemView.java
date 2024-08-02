@@ -1,6 +1,3 @@
-/*
- * PROPRIETARY/CONFIDENTIAL
- */
 package com.github.azazar.mirrorftp;
 
 import org.apache.commons.lang3.StringUtils;
@@ -8,10 +5,6 @@ import org.apache.ftpserver.ftplet.FileSystemView;
 import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.ftplet.FtpFile;
 
-/**
- *
- * @author Mikhail Yevchenko <m.ṥῥẚɱ.ѓѐḿởύḙ@uo1.net>
- */
 public class MirrorFileSystemView implements FileSystemView {
 
     FtpFile rootDirectory;

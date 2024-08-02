@@ -1,6 +1,3 @@
-/*
- * PROPRIETARY/CONFIDENTIAL
- */
 package com.github.azazar.mirrorftp;
 
 import java.io.File;
@@ -13,10 +10,6 @@ import java.util.List;
 
 import org.apache.ftpserver.ftplet.FtpFile;
 
-/**
- *
- * @author Mikhail Yevchenko <m.ṥῥẚɱ.ѓѐḿởύḙ@uo1.net>
- */
 public class MirrorFSRoot implements FtpFile {
 
     private final MirrorFileSystemFactory fs;
