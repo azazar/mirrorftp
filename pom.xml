@@ -54,4 +54,22 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.7.1</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <manifest>
+                        <mainClass>com.github.azazar.mirrorftp.MirrorFTP</mainClass>
+                    </manifest>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

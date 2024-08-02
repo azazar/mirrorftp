@@ -53,7 +53,7 @@ MirrorFTP uses a unique approach to serve files from multiple storage locations:
 To build the project, run the following command in the project root directory:
 
 ```
-mvn clean package
+mvn clean package assembly:single
 ```
 
 ## Running MirrorFTP
@@ -70,7 +70,7 @@ Options:
 
 Example:
 ```
-java -jar target/mirrorftp-1.0-SNAPSHOT.jar --password=MyPassword --port=2222 /path/to/storage1 /path/to/storage2
+java -jar target/mirrorftp-1.0-SNAPSHOT-jar-with-dependencies.jar --password=MyPassword --port=2222 /path/to/storage1 /path/to/storage2
 ```
 
 ## Connecting to MirrorFTP
