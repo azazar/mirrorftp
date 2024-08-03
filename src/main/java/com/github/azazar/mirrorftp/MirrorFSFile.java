@@ -101,16 +101,14 @@ public class MirrorFSFile implements FtpFile {
             for(File storage : bucketHome.storages) {
                 File propsFile = new File(storage, PROPS_FILENAME);
 
-                if (propsFile.exists()) {
-                    foundStorages++;
+                props = new Properties();
 
-                    props = new Properties();
+                props.setProperty("replicas", Integer.toString(storages.length));
 
-                    try(FileOutputStream out = new FileOutputStream(propsFile)) {
-                        props.store(out, "# MirrorFS Replica Properties");
-                    } catch (IOException ex) {
-                        return false;
-                    }
+                try(FileOutputStream out = new FileOutputStream(propsFile)) {
+                    props.store(out, "# MirrorFS Replica Properties");
+                } catch (IOException ex) {
+                    return false;
                 }
             }
 
