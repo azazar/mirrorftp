@@ -79,7 +79,7 @@ public class MirrorFSFile implements FtpFile {
         Properties props = null;
         int foundStorages = 0;
 
-        for(File storage : bucketHome.storages) {
+        for(File storage : bucketHome.getStorageFiles()) {
             File propsFile = new File(storage, PROPS_FILENAME);
 
             if (propsFile.exists()) {
@@ -98,7 +98,7 @@ public class MirrorFSFile implements FtpFile {
         }
 
         if (foundStorages == 0) {
-            for(File storage : bucketHome.storages) {
+            for(File storage : bucketHome.getStorageFiles()) {
                 File propsFile = new File(storage, PROPS_FILENAME);
 
                 props = new Properties();
