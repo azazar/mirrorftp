@@ -2,12 +2,14 @@ package com.github.azazar.mirrorftp;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 
 import org.apache.ftpserver.ftplet.FtpFile;
@@ -15,6 +17,7 @@ import org.apache.ftpserver.ftplet.FtpFile;
 public class MirrorFSFile implements FtpFile {
 
     private static final Random RNG = new Random();
+    private static final String PROPS_FILENAME = "mirrorftp.properties";
 
     String name;
     FtpFile parent;
@@ -25,12 +28,20 @@ public class MirrorFSFile implements FtpFile {
         this.name = name;
         this.parent = root;
         this.storages = null;
+
+        if (PROPS_FILENAME.equals(name)) {
+            throw new IllegalArgumentException("File name '" + name + "' is reserved");
+        }
     }
 
     MirrorFSFile(String name, MirrorFSFile parent) {
         this.name = name;
         this.parent = parent;
         this.storages = parent.storages;
+
+        if (PROPS_FILENAME.equals(name)) {
+            throw new IllegalArgumentException("File name '" + name + "' is reserved");
+        }
     }
 
     @Override
@@ -42,6 +53,75 @@ public class MirrorFSFile implements FtpFile {
         }
         
         return parentPath + "/" + name;
+    }
+
+    private MirrorFSFile getBucketHome() {
+        FtpFile file = this;
+
+        while (file instanceof MirrorFSFile mirrorFSFile) {
+            if (mirrorFSFile.parent instanceof MirrorFSRoot) {
+                return mirrorFSFile;
+            }
+
+            file = mirrorFSFile.parent;
+        }
+        
+        return null;
+    }
+
+    boolean isBucketHome() {
+        return parent instanceof MirrorFSRoot;
+    }
+
+    public boolean isBucketHealthy() {
+        MirrorFSFile bucketHome = getBucketHome();
+
+        Properties props = null;
+        int foundStorages = 0;
+
+        for(File storage : bucketHome.storages) {
+            File propsFile = new File(storage, PROPS_FILENAME);
+
+            if (propsFile.exists()) {
+                foundStorages++;
+
+                if (props == null) {
+                    try(FileInputStream in = new FileInputStream(propsFile)) {
+                        props = new Properties();
+
+                        props.load(in);
+                    } catch (IOException ex) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        if (foundStorages == 0) {
+            for(File storage : bucketHome.storages) {
+                File propsFile = new File(storage, PROPS_FILENAME);
+
+                if (propsFile.exists()) {
+                    foundStorages++;
+
+                    props = new Properties();
+
+                    try(FileOutputStream out = new FileOutputStream(propsFile)) {
+                        props.store(out, "# MirrorFS Replica Properties");
+                    } catch (IOException ex) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        if (props == null) {
+            return false;
+        }
+
+        return foundStorages == storages.length && storages.length == Integer.parseInt(props.getProperty("replicas", "-1"));
     }
 
     @Override
@@ -181,6 +261,10 @@ public class MirrorFSFile implements FtpFile {
 
     @Override
     public boolean mkdir() {
+        if (!isBucketHealthy()) {
+            return false;
+        }
+
         boolean result = true;
 
         for (File f : getStorageFiles()) {
@@ -192,6 +276,10 @@ public class MirrorFSFile implements FtpFile {
 
     @Override
     public boolean delete() {
+        if (!isBucketHealthy()) {
+            return false;
+        }
+
         boolean result = true;
 
         for (File f : getStorageFiles()) {
@@ -203,6 +291,10 @@ public class MirrorFSFile implements FtpFile {
 
     @Override
     public boolean move(FtpFile destination) {
+        if (!isBucketHealthy()) {
+            return false;
+        }
+
         throw new UnsupportedOperationException("Unimplemented method 'move'");
     }
 
@@ -212,7 +304,13 @@ public class MirrorFSFile implements FtpFile {
 
         for (File storage : storages) {
             for(File child : new File(storage, getAbsolutePath().substring(1)).listFiles()) {
-                files.computeIfAbsent(getAbsolutePath() + "/" + child.getName(), path -> new MirrorFSFile(child.getName(), this));
+                String filename = child.getName();
+
+                if (PROPS_FILENAME.equals(filename) && isBucketHome()) {
+                    continue;
+                }
+
+                files.computeIfAbsent(getAbsolutePath() + "/" + filename, path -> new MirrorFSFile(filename, this));
             }
         }
 
@@ -221,6 +319,10 @@ public class MirrorFSFile implements FtpFile {
 
     @Override
     public OutputStream createOutputStream(long offset) throws IOException {
+        if (!isBucketHealthy()) {
+            throw new IOException("Bucket is not in healthy state");
+        }
+
         if (parent instanceof MirrorFSRoot)
             throw new IOException("Can't create output stream for root directory");
 
