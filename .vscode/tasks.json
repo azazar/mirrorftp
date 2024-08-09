@@ -7,6 +7,13 @@
             "label": "Create test run directories",
             "type": "shell",
             "command": "bash -c 'for replica_root in /tmp/mirrorfs-test/{1,2}/bucket; do mkdir -p $replica_root; echo OK > $replica_root/ok; done; for path in /tmp/mirrorfs-test/{not_ok,1/bucket/not_ok}; do echo Not OK > $path; echo Not OK > /tmp/mirrorfs-test/1/bucket/not_ok; done'"
+        },
+        {
+            "label": "Launch test FTP server",
+            "type": "shell",
+            "command": "mvn exec:java -Dexec.mainClass=\"com.github.azazar.mirrorftp.MirrorFTP\" -Dexec.args=\"/tmp/mirrorfs-test/1 /tmp/mirrorfs-test/2\"",
+            "dependsOn": "Create test run directories",
+            "problemMatcher": []
         }
     ]
 }
