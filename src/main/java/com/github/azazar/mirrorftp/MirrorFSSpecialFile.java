@@ -82,12 +82,12 @@ public class MirrorFSSpecialFile implements FtpFile {
 
     @Override
     public String getOwnerName() {
-        return "root";
+        return "nobody";
     }
 
     @Override
     public String getGroupName() {
-        return "root";
+        return "nobody";
     }
 
     @Override
