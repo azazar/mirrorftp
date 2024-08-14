@@ -74,7 +74,9 @@ public class MirrorFSFile implements FtpFile {
     }
 
     public boolean isBucketHealthy() {
-        return getBucketProblems(false) == null;
+        List<String> problems = getBucketProblems(false);
+
+        return getBucketProblems(false) == null || problems.isEmpty();
     }
 
     public List<String> getBucketProblems(boolean findAny) {
