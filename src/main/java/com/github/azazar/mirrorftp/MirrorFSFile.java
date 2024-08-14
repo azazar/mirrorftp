@@ -74,10 +74,16 @@ public class MirrorFSFile implements FtpFile {
     }
 
     public boolean isBucketHealthy() {
-        MirrorFSFile bucketHome = getBucketHome();
+        return getBucketProblems(false) == null;
+    }
+
+    public List<String> getBucketProblems(boolean findAny) {
+            MirrorFSFile bucketHome = getBucketHome();
 
         Properties props = null;
         int foundStorages = 0;
+
+        ArrayList<String> problems = new ArrayList<>();
 
         for(File storage : bucketHome.getStorageFiles()) {
             File propsFile = new File(storage, PROPS_FILENAME);
@@ -91,10 +97,18 @@ public class MirrorFSFile implements FtpFile {
 
                         props.load(in);
                     } catch (IOException ex) {
-                        return false;
+                        problems.add("Can't read replica " + storage + " properties: " + ex.getMessage());
+
+                        if (findAny) {
+                            return problems;
+                        }
                     }
                 }
             }
+        }
+
+        if (!problems.isEmpty()) {
+            return problems;
         }
 
         if (foundStorages == 0) {
@@ -108,18 +122,32 @@ public class MirrorFSFile implements FtpFile {
                 try(FileOutputStream out = new FileOutputStream(propsFile)) {
                     props.store(out, "# MirrorFS Replica Properties");
                 } catch (IOException ex) {
-                    return false;
-                }
+                    problems.add("Can't write replica " + storage + " properties: " + ex.getMessage());
+
+                    if (findAny) {
+                        return problems;
+                    }
+            }
             }
 
-            return true;
+            return problems;
         }
 
         if (props == null) {
-            return false;
+            problems.add("Can't read replica properties");
+
+            return problems;
         }
 
-        return foundStorages == storages.length && storages.length == Integer.parseInt(props.getProperty("replicas", "-1"));
+        if (foundStorages != storages.length) {
+            problems.add("Wrong number of replicas (found: " + foundStorages + ", expected: " + storages.length + ")");
+        }
+
+        if (storages.length != Integer.parseInt(props.getProperty("replicas", "-1"))) {
+            problems.add("Wrong number of replicas (found: " + props.getProperty("replicas") + ", expected: " + storages.length + ")");
+        }
+
+        return problems;
     }
 
     @Override

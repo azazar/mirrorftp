@@ -117,13 +117,23 @@ public class MirrorFSRoot implements FtpFile {
 
     @Override
     public List<? extends FtpFile> listFiles() {
-        HashMap<String, MirrorFSFile> files = new HashMap<>();
+        return listFiles(true);
+    }
+
+    public List<? extends FtpFile> listFiles(boolean includeSpecial) {
+        HashMap<String, FtpFile> files = new HashMap<>();
 
         for (File storage : storages) {
             for(File child : storage.listFiles()) {
                 if (child.isDirectory()) {
-                    files.computeIfAbsent(child.getName(), name -> new MirrorFSFile(name, this)).addStorage(storage);
+                    ((MirrorFSFile)files.computeIfAbsent(child.getName(), name -> new MirrorFSFile(name, this))).addStorage(storage);
                 }
+            }
+        }
+
+        if (includeSpecial) {
+            for(String name : MirrorFSSpecialFile.SPECIAL_FILES) {
+                files.put(name, new MirrorFSSpecialFile(this, name));
             }
         }
 
@@ -140,12 +150,28 @@ public class MirrorFSRoot implements FtpFile {
         throw new UnsupportedOperationException("Unimplemented method 'createInputStream'");
     }
 
-    public void addStoragesTo(MirrorFSFile ftpFile) {
+    void addStoragesFor(MirrorFSFile ftpFile) {
         for (File storage : storages) {
             if (new File(storage, ftpFile.name).isDirectory()) {
                 ftpFile.addStorage(storage);
             }
         }
+    }
+
+    public List<File> getStorages() {
+        return List.of(storages);
+    }
+
+    public FtpFile getChild(String name) {
+        if (MirrorFSSpecialFile.SPECIAL_FILES.contains(name)) {
+            return new MirrorFSSpecialFile(this, name);
+        }
+
+        MirrorFSFile ftpFile = new MirrorFSFile(name, this);
+                    
+        addStoragesFor(ftpFile);
+
+        return ftpFile;
     }
 
 }

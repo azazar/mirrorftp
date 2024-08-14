@@ -91,9 +91,7 @@ public class MirrorFileSystemView implements FileSystemView {
 
             switch (ftpFile) {
                 case MirrorFSRoot mirrorFSRoot -> {
-                    ftpFile = new MirrorFSFile(part, mirrorFSRoot);
-                    
-                    mirrorFSRoot.addStoragesTo((MirrorFSFile)ftpFile);
+                    ftpFile = mirrorFSRoot.getChild(part);
                 }
                 case MirrorFSFile mirrorFSFile -> ftpFile = new MirrorFSFile(part, mirrorFSFile);
                 default -> throw new UnsupportedOperationException("Unimplemented method 'getFile(\"" + file + "\")'");
