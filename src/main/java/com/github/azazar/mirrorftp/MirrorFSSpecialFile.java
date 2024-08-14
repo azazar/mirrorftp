@@ -27,8 +27,8 @@ public class MirrorFSSpecialFile implements FtpFile {
 
     public static final Set<String> SPECIAL_FILES = Set.of(FILE_HEALTH, FILE_DF);
 
-    private MirrorFSRoot root;
-    private String name;
+    private final MirrorFSRoot root;
+    private final String name;
 
     MirrorFSSpecialFile(MirrorFSRoot root, String name) {
         this.root = root;
