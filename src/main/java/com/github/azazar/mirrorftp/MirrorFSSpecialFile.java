@@ -185,14 +185,28 @@ public class MirrorFSSpecialFile implements FtpFile {
     public void buildDfFile(StringBuilder sb) {
         MirrorFSFile[] buckets = getBuckets();
 
+        StringBuilder bs = new StringBuilder();
+
         for (MirrorFSFile bucket : buckets) {
             long free = Long.MAX_VALUE;
 
+            bs.setLength(0);
+
             for (File dir : bucket.getStorageFiles()) {
                 free = Math.min(dir.getFreeSpace(), free);
-            }
 
-            sb.append(bucket.getName()).append('\t').append(FileUtils.byteCountToDisplaySize(free)).append('\n');
+                if (bs.length() == 0) {
+                    bs.append(" (");
+                }
+                else {
+                    bs.append(", ");
+                }
+
+                bs.append(dir.getParentFile().getName()).append(": ").append(FileUtils.byteCountToDisplaySize(dir.getFreeSpace()));
+            }
+            bs.append(')');
+
+            sb.append(bucket.getName()).append('\t').append(FileUtils.byteCountToDisplaySize(free)).append(bs).append('\n');
         }
     }
 
