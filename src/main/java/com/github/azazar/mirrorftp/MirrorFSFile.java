@@ -142,11 +142,11 @@ public class MirrorFSFile implements FtpFile {
         }
 
         if (foundStorages != storages.length) {
-            problems.add("Wrong number of replicas (found: " + foundStorages + ", expected: " + storages.length + ")");
+            problems.add("Wrong number of replicas (found: " + storages.length + ", expected: " + foundStorages + ")");
         }
 
         if (storages.length != Integer.parseInt(props.getProperty("replicas", "-1"))) {
-            problems.add("Wrong number of replicas (found: " + props.getProperty("replicas") + ", expected: " + storages.length + ")");
+            problems.add("Wrong number of replicas (found: " + storages.length + ", expected: " + props.getProperty("replicas") + ")");
         }
 
         return problems;
