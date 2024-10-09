@@ -6,16 +6,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.ftpserver.FtpServer;
 import org.junit.jupiter.api.AfterAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -84,66 +84,84 @@ class MirrorFTPTest {
         FileUtils.deleteDirectory(TEMP_DIR_2.toFile());
     }
 
+    private static String uploadFile(FTPClient client, String fileName, String content) throws IOException {
+        try (InputStream inputStream = new ByteArrayInputStream(content.getBytes())) {
+            boolean result = client.storeFile(fileName, inputStream);
+            assertTrue(result, "Failed to upload file: " + fileName);
+        }
+        return fileName;
+    }
+
+    private static String downloadFile(FTPClient client, String fileName) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        boolean result = client.retrieveFile(fileName, outputStream);
+        assertTrue(result, "Failed to download file: " + fileName);
+        return outputStream.toString();
+    }
+
+    private static void deleteFile(FTPClient client, String fileName) throws IOException {
+        boolean result = client.deleteFile(fileName);
+        assertTrue(result, "Failed to delete file: " + fileName);
+    }
+
     @Test
     void testListFiles() throws IOException {
-        // Create a test file in both directories
-        Files.writeString(BUCKET_DIR_1.resolve("testfile.txt"), "Test content");
-        Files.writeString(BUCKET_DIR_1.resolve("testfile.txt"), "Test content");
+        String fileName = "testfile.txt";
+        String content = "Test content";
+        uploadFile(FTP_CLIENT, fileName, content);
 
         FTPFile[] files = FTP_CLIENT.listFiles();
-
         FTPFile file = null;
-
         for (FTPFile f : files) {
-            if (f.getName().equals("testfile.txt")) {
+            if (f.getName().equals(fileName)) {
                 file = f;
                 break;
             }
         }
 
         assertNotNull(file);
+        deleteFile(FTP_CLIENT, fileName);
     }
 
     @Test
     void testUploadFile() throws IOException {
+        String fileName = "uploadtest.txt";
         String content = "Hello, World!";
-        boolean result;
         
-        try (InputStream inputStream = new ByteArrayInputStream(content.getBytes())) {
-            result = FTP_CLIENT.storeFile("uploadtest.txt", inputStream);
-        }
+        uploadFile(FTP_CLIENT, fileName, content);
 
-        assertTrue(result);
-        assertTrue(Files.exists(BUCKET_DIR_1.resolve("uploadtest.txt")));
-        assertTrue(Files.exists(BUCKET_DIR_2.resolve("uploadtest.txt")));
-        assertEquals(content, Files.readString(BUCKET_DIR_1.resolve("uploadtest.txt")));
-        assertEquals(content, Files.readString(BUCKET_DIR_2.resolve("uploadtest.txt")));
+        assertTrue(Files.exists(BUCKET_DIR_1.resolve(fileName)));
+        assertTrue(Files.exists(BUCKET_DIR_2.resolve(fileName)));
+        assertEquals(content, Files.readString(BUCKET_DIR_1.resolve(fileName)));
+        assertEquals(content, Files.readString(BUCKET_DIR_2.resolve(fileName)));
+
+        deleteFile(FTP_CLIENT, fileName);
     }
 
     @Test
     void testDownloadFile() throws IOException {
+        String fileName = "downloadtest.txt";
         String content = "Download test content";
-        Files.writeString(BUCKET_DIR_1.resolve("downloadtest.txt"), content);
-        Files.writeString(BUCKET_DIR_2.resolve("downloadtest.txt"), content);
+        
+        uploadFile(FTP_CLIENT, fileName, content);
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        boolean result = FTP_CLIENT.retrieveFile("downloadtest.txt", outputStream);
-        outputStream.close();
+        String downloadedContent = downloadFile(FTP_CLIENT, fileName);
+        assertEquals(content, downloadedContent);
 
-        assertTrue(result);
-        assertEquals(content, outputStream.toString());
+        deleteFile(FTP_CLIENT, fileName);
     }
 
     @Test
     void testDeleteFile() throws IOException {
-        Files.writeString(BUCKET_DIR_1.resolve("deleteme.txt"), "Delete me");
-        Files.writeString(BUCKET_DIR_2.resolve("deleteme.txt"), "Delete me");
+        String fileName = "deleteme.txt";
+        String content = "Delete me";
+        
+        uploadFile(FTP_CLIENT, fileName, content);
 
-        boolean result = FTP_CLIENT.deleteFile("deleteme.txt");
+        deleteFile(FTP_CLIENT, fileName);
 
-        assertTrue(result);
-        assertFalse(Files.exists(BUCKET_DIR_1.resolve("deleteme.txt")));
-        assertFalse(Files.exists(BUCKET_DIR_2.resolve("deleteme.txt")));
+        assertFalse(Files.exists(BUCKET_DIR_1.resolve(fileName)));
+        assertFalse(Files.exists(BUCKET_DIR_2.resolve(fileName)));
     }
 
     @Test
@@ -218,5 +236,39 @@ class MirrorFTPTest {
         finally {
             FTP_CLIENT.changeWorkingDirectory("/" + TEST_BUCKET);
         }
+    }
+
+    @Test
+    void testMultithreadedOperations() throws Exception {
+        int threadCount = 10;
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+
+        for (int i = 0; i < threadCount; i++) {
+            final int threadId = i;
+            executor.submit(() -> {
+                try {
+                    FTPClient client = new FTPClient();
+                    client.connect("localhost", PORT);
+                    client.login(USERNAME, PASSWORD);
+                    client.enterLocalPassiveMode();
+                    client.changeWorkingDirectory("/" + TEST_BUCKET);
+
+                    String fileName = "file_" + threadId + ".txt";
+                    String content = "Content from thread " + threadId;
+
+                    uploadFile(client, fileName, content);
+                    String downloadedContent = downloadFile(client, fileName);
+                    assertEquals(content, downloadedContent);
+                    deleteFile(client, fileName);
+
+                    client.disconnect();
+                } catch (IOException e) {
+                    fail("Thread " + threadId + " failed: " + e.getMessage());
+                }
+            });
+        }
+
+        executor.shutdown();
+        assertTrue(executor.awaitTermination(30, TimeUnit.SECONDS));
     }
 }
